@@ -2,7 +2,13 @@
   "name": "genmdm-parser",
   "version": "1.0.0",
   "description": "GenMDM Parser",
-  "main": "index.js",
+  "browser": "dist.browser/main.js",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "files": [
+    "dist",
+    "dist.browser"
+  ],
   "author": "2xAA",
   "license": "MIT",
   "devDependencies": {
@@ -24,6 +30,7 @@
     "vite": "^2.3.7"
   },
   "scripts": {
+    "build": "tsc && tsc -p tsconfig.browser.json",
     "dev": "vite",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'lib/**/*.test.ts'",
     "coverage": "nyc -r text -e .ts -x \"lib/*.test.ts\" yarn run test",
