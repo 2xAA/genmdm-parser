@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenMDM Parser</title>
+  <script type="module" src="/src/example-genmdmparser.js"></script>
+  <link rel="stylesheet" href="https://v36p9.csb.app/style.css">
+</head>
+<body>
+  <pre class="console"></pre>
+  <script>
+    const oldConsole = console.log;
+    const pre = document.querySelector('pre.console');
+
+    console.log = function(...args) {
+      const text = args.map(arg => {
+        if (typeof arg === 'object') {
+          return JSON.stringify(arg, null, 2);
+        }
+        return arg;
+      })
+
+      pre.innerHTML += text.join(' ') + '\n';
+      oldConsole(...args)
+    }
+  </script>
+</body>
+</html>

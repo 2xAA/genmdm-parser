@@ -1,0 +1,32 @@
+{
+  "name": "genmdm-parser",
+  "version": "1.0.0",
+  "description": "GenMDM Parser",
+  "main": "index.js",
+  "author": "2xAA",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.2.16",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^15.12.2",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
+    "chai": "^4.3.4",
+    "chai-bytes": "^0.1.2",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0",
+    "prettier": "^2.3.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.3.2",
+    "vite": "^2.3.7"
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'lib/**/*.test.ts'",
+    "coverage": "nyc -r text -e .ts -x \"lib/*.test.ts\" yarn run test",
+    "lint": "eslint '*/**/*.{js,ts}' --quiet --fix"
+  }
+}
