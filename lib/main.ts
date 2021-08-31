@@ -48,4 +48,28 @@ export class GenMDMParser {
 
     return genmInstruments.join("\n");
   }
+
+  parseTfi(tfi: Uint8Array): GenmInstrument {
+    const instrument = new GenmInstrument();
+
+    instrument.algorithm = tfi[0];
+    instrument.fmFeedback = tfi[1];
+
+    for (let i = 0; i < 4; ++i) {
+      const index = i + 1;
+
+      instrument[`op${index}Multiple`] = tfi[2 + 10 * i];
+      instrument[`op${index}Detune`] = tfi[3 + 10 * i];
+      instrument[`op${index}TotalLevel`] = tfi[4 + 10 * i];
+      instrument[`op${index}RateScaling`] = tfi[5 + 10 * i];
+      instrument[`op${index}Attack`] = tfi[6 + 10 * i];
+      instrument[`op${index}Decay1`] = tfi[7 + 10 * i];
+      instrument[`op${index}Decay2`] = tfi[8 + 10 * i];
+      instrument[`op${index}Release`] = tfi[9 + 10 * i];
+      instrument[`op${index}Level2`] = tfi[10 + 10 * i];
+      instrument[`op${index}SSGEG`] = tfi[11 + 10 * i];
+    }
+
+    return instrument;
+  }
 }

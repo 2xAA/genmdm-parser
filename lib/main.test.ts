@@ -121,6 +121,51 @@ const generatedTfi = [
   100, 0, 24, 12, 8, 6, 1, 0, 4, 0, 100, 0, 24, 12, 8, 6, 1, 0,
 ];
 
+const parsedTfi = {
+  algorithm: 4,
+  fmFeedback: 4,
+  op1Multiple: 4,
+  op1Detune: 6,
+  op1TotalLevel: 97,
+  op1RateScaling: 0,
+  op1Attack: 31,
+  op1Decay1: 16,
+  op1Decay2: 2,
+  op1Release: 2,
+  op1Level2: 4,
+  op1SSGEG: 0,
+  op2Multiple: 4,
+  op2Detune: 0,
+  op2TotalLevel: 97,
+  op2RateScaling: 0,
+  op2Attack: 31,
+  op2Decay1: 13,
+  op2Decay2: 2,
+  op2Release: 2,
+  op2Level2: 3,
+  op2SSGEG: 0,
+  op3Multiple: 2,
+  op3Detune: 6,
+  op3TotalLevel: 100,
+  op3RateScaling: 0,
+  op3Attack: 24,
+  op3Decay1: 12,
+  op3Decay2: 8,
+  op3Release: 6,
+  op3Level2: 1,
+  op3SSGEG: 0,
+  op4Multiple: 4,
+  op4Detune: 0,
+  op4TotalLevel: 100,
+  op4RateScaling: 0,
+  op4Attack: 24,
+  op4Decay1: 12,
+  op4Decay2: 8,
+  op4Release: 6,
+  op4Level2: 1,
+  op4SSGEG: 0,
+};
+
 const generatedDmp = [
   11, 2, 1, 0, 4, 4, 0, 4, 97, 31, 16, 2, 2, 0, 0, 6, 2, 0, 4, 97, 31, 13, 2, 2,
   0, 0, 0, 2, 0, 2, 100, 24,
@@ -147,6 +192,14 @@ describe("GenMDMParser", () => {
     const genm = parser.generateGenm(parsed);
 
     expect(genm).equals(genMdmFile);
+  });
+
+  it("can parse TFI", () => {
+    const parser = new GenMDMParser();
+    const parsed = parser.parseTfi(Uint8Array.from(generatedTfi));
+    const genm = parsed.toJSON();
+
+    expect(genm).to.eql(parsedTfi);
   });
 
   it("can generate TFI", () => {
