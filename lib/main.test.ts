@@ -7,6 +7,9 @@ const { expect } = chai.use(chaiBytes);
 const genMdmFile = `0, 4 0 0 4 3 97 97 100 100 6 0 6 0 31 31 24 24 16 13 12 12 2 2 8 8 4 4 2 4 0 0 0 0 4 3 1 1 2 2 6 6 0 0 0 0 0 0 0 0 01_capcom_logo_37.tfi;
 1, 0 0 0 0 3 107 103 107 100 5 6 4 6 31 26 28 31 20 16 20 7 3 4 2 3 6 0 5 1 2 1 1 2 4 2 6 1 3 3 3 6 0 0 0 0 0 0 0 0 03_player_select_12.tfi;`;
 
+const badGenMdmFile = `0, 4 0 0 4 3 97 97 100 100 100 0 6 0 31 31 24 24 16 13 12 12 2 2 8 8 4 4 2 4 0 0 0 0 4 3 1 1 2 2 6 6 0 0 0 0 0 0 0 0 01_capcom_logo_37.tfi;
+1, 0 0 0 0 3 107 103 107 100 5 6 4 6 31 26 28 31 20 16 20 7 3 4 2 3 6 0 5 1 2 1 1 2 4 2 6 1 3 3 3 6 0 0 0 0 0 0 0 0 03_player_select_12.tfi;`;
+
 const genMdmParsed = [
   {
     instrumentIndex: 0,
@@ -276,5 +279,13 @@ describe("GenMDMParser", () => {
     const midiCCs = parsed.map((instrument) => instrument.toGenMDM());
 
     expect(midiCCs[0]).to.eql(generatedMidiCcs);
+  });
+
+  it("throws an error when a value is out of range in a genm file", () => {
+    const parser = new GenMDMParser();
+
+    expect(() => {
+      parser.parseGenm(badGenMdmFile);
+    }).to.throw();
   });
 });
