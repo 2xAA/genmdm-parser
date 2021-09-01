@@ -1,7 +1,12 @@
 import { GenMInstrumentValues } from "./main.d";
+import { mapToCCRange } from "./utils/map-to-cc-range";
 
+interface GenMdmMidiParameter {
+  cc: number;
+}
 interface GenmInstrumentParameter {
   size: number;
+  genMdmMidi?: GenMdmMidiParameter;
 }
 
 interface GenmInstrumentParameterList {
@@ -10,55 +15,55 @@ interface GenmInstrumentParameterList {
 
 const genmInstrumentParameters: GenmInstrumentParameterList = {
   instrumentIndex: { size: 128 },
-  algorithm: { size: 8 },
-  lfoFm: { size: 8 },
-  lfoAm: { size: 8 },
-  fmFeedback: { size: 8 },
-  panning: { size: 4 },
-  op1TotalLevel: { size: 128 },
-  op2TotalLevel: { size: 128 },
-  op3TotalLevel: { size: 128 },
-  op4TotalLevel: { size: 128 },
-  op1Detune: { size: 8 },
-  op2Detune: { size: 8 },
-  op3Detune: { size: 8 },
-  op4Detune: { size: 8 },
-  op1Attack: { size: 32 },
-  op2Attack: { size: 32 },
-  op3Attack: { size: 32 },
-  op4Attack: { size: 32 },
-  op1Decay1: { size: 32 },
-  op2Decay1: { size: 32 },
-  op3Decay1: { size: 32 },
-  op4Decay1: { size: 32 },
-  op1Decay2: { size: 32 },
-  op2Decay2: { size: 32 },
-  op3Decay2: { size: 32 },
-  op4Decay2: { size: 32 },
-  op1Multiple: { size: 16 },
-  op2Multiple: { size: 16 },
-  op3Multiple: { size: 16 },
-  op4Multiple: { size: 16 },
-  op1RateScaling: { size: 4 },
-  op2RateScaling: { size: 4 },
-  op3RateScaling: { size: 4 },
-  op4RateScaling: { size: 4 },
-  op1Level2: { size: 16 },
-  op2Level2: { size: 16 },
-  op3Level2: { size: 16 },
-  op4Level2: { size: 16 },
-  op1Release: { size: 16 },
-  op2Release: { size: 16 },
-  op3Release: { size: 16 },
-  op4Release: { size: 16 },
-  op1LfoEnable: { size: 2 },
-  op2LfoEnable: { size: 2 },
-  op3LfoEnable: { size: 2 },
-  op4LfoEnable: { size: 2 },
-  op1SSGEG: { size: 16 },
-  op2SSGEG: { size: 16 },
-  op3SSGEG: { size: 16 },
-  op4SSGEG: { size: 16 },
+  algorithm: { size: 8, genMdmMidi: { cc: 14 } },
+  lfoFm: { size: 8, genMdmMidi: { cc: 75 } },
+  lfoAm: { size: 8, genMdmMidi: { cc: 76 } },
+  fmFeedback: { size: 8, genMdmMidi: { cc: 15 } },
+  panning: { size: 4, genMdmMidi: { cc: 77 } },
+  op1TotalLevel: { size: 128, genMdmMidi: { cc: 16 } },
+  op2TotalLevel: { size: 128, genMdmMidi: { cc: 17 } },
+  op3TotalLevel: { size: 128, genMdmMidi: { cc: 18 } },
+  op4TotalLevel: { size: 128, genMdmMidi: { cc: 19 } },
+  op1Detune: { size: 8, genMdmMidi: { cc: 24 } },
+  op2Detune: { size: 8, genMdmMidi: { cc: 25 } },
+  op3Detune: { size: 8, genMdmMidi: { cc: 26 } },
+  op4Detune: { size: 8, genMdmMidi: { cc: 27 } },
+  op1Attack: { size: 32, genMdmMidi: { cc: 43 } },
+  op2Attack: { size: 32, genMdmMidi: { cc: 44 } },
+  op3Attack: { size: 32, genMdmMidi: { cc: 45 } },
+  op4Attack: { size: 32, genMdmMidi: { cc: 46 } },
+  op1Decay1: { size: 32, genMdmMidi: { cc: 47 } },
+  op2Decay1: { size: 32, genMdmMidi: { cc: 48 } },
+  op3Decay1: { size: 32, genMdmMidi: { cc: 49 } },
+  op4Decay1: { size: 32, genMdmMidi: { cc: 50 } },
+  op1Decay2: { size: 32, genMdmMidi: { cc: 51 } },
+  op2Decay2: { size: 32, genMdmMidi: { cc: 52 } },
+  op3Decay2: { size: 32, genMdmMidi: { cc: 53 } },
+  op4Decay2: { size: 32, genMdmMidi: { cc: 54 } },
+  op1Multiple: { size: 16, genMdmMidi: { cc: 20 } },
+  op2Multiple: { size: 16, genMdmMidi: { cc: 21 } },
+  op3Multiple: { size: 16, genMdmMidi: { cc: 22 } },
+  op4Multiple: { size: 16, genMdmMidi: { cc: 23 } },
+  op1RateScaling: { size: 4, genMdmMidi: { cc: 39 } },
+  op2RateScaling: { size: 4, genMdmMidi: { cc: 40 } },
+  op3RateScaling: { size: 4, genMdmMidi: { cc: 41 } },
+  op4RateScaling: { size: 4, genMdmMidi: { cc: 42 } },
+  op1Level2: { size: 16, genMdmMidi: { cc: 55 } },
+  op2Level2: { size: 16, genMdmMidi: { cc: 56 } },
+  op3Level2: { size: 16, genMdmMidi: { cc: 57 } },
+  op4Level2: { size: 16, genMdmMidi: { cc: 58 } },
+  op1Release: { size: 16, genMdmMidi: { cc: 59 } },
+  op2Release: { size: 16, genMdmMidi: { cc: 60 } },
+  op3Release: { size: 16, genMdmMidi: { cc: 61 } },
+  op4Release: { size: 16, genMdmMidi: { cc: 62 } },
+  op1LfoEnable: { size: 2, genMdmMidi: { cc: 70 } },
+  op2LfoEnable: { size: 2, genMdmMidi: { cc: 71 } },
+  op3LfoEnable: { size: 2, genMdmMidi: { cc: 72 } },
+  op4LfoEnable: { size: 2, genMdmMidi: { cc: 73 } },
+  op1SSGEG: { size: 16, genMdmMidi: { cc: 90 } },
+  op2SSGEG: { size: 16, genMdmMidi: { cc: 91 } },
+  op3SSGEG: { size: 16, genMdmMidi: { cc: 92 } },
+  op4SSGEG: { size: 16, genMdmMidi: { cc: 93 } },
 };
 
 function rangeCheck(parameter: string, value: number): number {
@@ -81,7 +86,8 @@ export class GenmInstrument {
     | GenmInstrumentParameterList
     | (() => string)
     | (() => Uint8Array)
-    | (() => GenMInstrumentValues);
+    | (() => GenMInstrumentValues)
+    | (() => Map<number, number>);
 
   instrument = {} as GenMInstrumentValues;
 
@@ -209,6 +215,23 @@ export class GenmInstrument {
     }
 
     return dmpData;
+  }
+
+  toGenMDM(): Map<number, number> {
+    const map = new Map<number, number>();
+    const parameters: string[] = Object.keys(this.genmInstrumentParameters);
+    parameters.shift();
+
+    parameters.forEach((parameter: string) => {
+      const cc = this.genmInstrumentParameters[parameter].genMdmMidi?.cc;
+      const size = this.genmInstrumentParameters[parameter].size;
+
+      if (cc) {
+        map.set(cc, mapToCCRange(Number(this[parameter]), size));
+      }
+    });
+
+    return map;
   }
 
   get genmInstrumentParameters(): GenmInstrumentParameterList {

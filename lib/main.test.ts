@@ -171,6 +171,58 @@ const generatedDmp = [
   0, 0, 0, 2, 0, 2, 100, 24,
 ];
 
+const generatedMidiCcs = new Map<number, number>([
+  [14, 64],
+  [75, 0],
+  [76, 0],
+  [15, 64],
+  [77, 95],
+  [16, 96],
+  [17, 96],
+  [18, 99],
+  [19, 99],
+  [24, 95],
+  [25, 0],
+  [26, 95],
+  [27, 0],
+  [43, 123],
+  [44, 123],
+  [45, 95],
+  [46, 95],
+  [47, 64],
+  [48, 52],
+  [49, 48],
+  [50, 48],
+  [51, 8],
+  [52, 8],
+  [53, 32],
+  [54, 32],
+  [20, 32],
+  [21, 32],
+  [22, 16],
+  [23, 32],
+  [39, 0],
+  [40, 0],
+  [41, 0],
+  [42, 0],
+  [55, 32],
+  [56, 24],
+  [57, 8],
+  [58, 8],
+  [59, 16],
+  [60, 16],
+  [61, 48],
+  [62, 48],
+  [70, 0],
+  [71, 0],
+  [72, 0],
+  [73, 0],
+  [90, 0],
+  [91, 0],
+  [92, 0],
+  [93, 0],
+]);
+
 describe("GenMDMParser", () => {
   it("can be constructed", () => {
     const parser = new GenMDMParser();
@@ -216,5 +268,13 @@ describe("GenMDMParser", () => {
     const dmps = parsed.map((instrument) => instrument.toDMP());
 
     expect(dmps[0]).to.equalBytes(generatedDmp);
+  });
+
+  it("can generate GenMDM MIDI CC values", () => {
+    const parser = new GenMDMParser();
+    const parsed = parser.parseGenm(genMdmFile);
+    const midiCCs = parsed.map((instrument) => instrument.toGenMDM());
+
+    expect(midiCCs[0]).to.eql(generatedMidiCcs);
   });
 });
