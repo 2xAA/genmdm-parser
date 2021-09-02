@@ -223,7 +223,7 @@ export class GenmInstrument {
 
     parameters.forEach((parameter: string) => {
       const cc = this.genmInstrumentParameters[parameter].genMdmMidi?.cc;
-      const size = this.genmInstrumentParameters[parameter].size;
+      const size = this.genmInstrumentParameters[parameter].size - 1;
 
       if (cc) {
         map.set(cc, mapToCCRange(Number(this[parameter]), size));
