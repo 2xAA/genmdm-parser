@@ -60,7 +60,7 @@ export class GenMDMParser {
 
       instrument[`op${index}Multiple`] = tfi[2 + 10 * i];
       instrument[`op${index}Detune`] = tfi[3 + 10 * i];
-      instrument[`op${index}TotalLevel`] = tfi[4 + 10 * i];
+      instrument[`op${index}TotalLevel`] = 127 - tfi[4 + 10 * i];
       instrument[`op${index}RateScaling`] = tfi[5 + 10 * i];
       instrument[`op${index}Attack`] = tfi[6 + 10 * i];
       instrument[`op${index}Decay1`] = tfi[7 + 10 * i];

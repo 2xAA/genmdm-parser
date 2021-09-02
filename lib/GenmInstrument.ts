@@ -144,7 +144,7 @@ export class GenmInstrument {
 
       tfiData[2 + 10 * i] = Number(this[`op${index}Multiple`]);
       tfiData[3 + 10 * i] = Number(this[`op${index}Detune`]);
-      tfiData[4 + 10 * i] = Number(this[`op${index}TotalLevel`]);
+      tfiData[4 + 10 * i] = 127 - Number(this[`op${index}TotalLevel`]);
       tfiData[5 + 10 * i] = Number(this[`op${index}RateScaling`]);
       tfiData[6 + 10 * i] = Number(this[`op${index}Attack`]);
       tfiData[7 + 10 * i] = Number(this[`op${index}Decay1`]);
@@ -201,13 +201,12 @@ export class GenmInstrument {
       const index = i + 1;
 
       dmpData[0x07 + 11 * i] = Number(this[`op${index}Multiple`]);
-      dmpData[0x08 + 11 * i] = Number(this[`op${index}TotalLevel`]);
+      dmpData[0x08 + 11 * i] = 127 - Number(this[`op${index}TotalLevel`]);
       dmpData[0x09 + 11 * i] = Number(this[`op${index}Attack`]);
       dmpData[0x0a + 11 * i] = Number(this[`op${index}Decay1`]);
-      dmpData[0x0b + 11 * i] = Number(this[`op${index}Decay2`]);
+      dmpData[0x0b + 11 * i] = Number(this[`op${index}Level2`]);
       dmpData[0x0c + 11 * i] = Number(this[`op${index}Release`]);
-      // AM (not stored in .genm files?)
-      dmpData[0x0d + 11 * i] = 0;
+      dmpData[0x0d + 11 * i] = Number(this[`op${index}LfoEnable`]);
       dmpData[0x0e + 11 * i] = Number(this[`op${index}RateScaling`]);
       dmpData[0x0f + 11 * i] = Number(this[`op${index}Detune`]);
       dmpData[0x10 + 11 * i] = Number(this[`op${index}Decay2`]);
