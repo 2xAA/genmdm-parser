@@ -226,6 +226,21 @@ const generatedMidiCcs = new Map<number, number>([
   [93, 0],
 ]);
 
+const y12 = new Uint8Array([
+  100, 15, 5, 31, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 14, 5, 31, 8, 9, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 4, 21, 31, 31, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+  21, 31, 31, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 84, 105, 109, 101, 32, 84, 114, 97, 120, 32, 40, 112, 114,
+  111, 116, 111, 84, 105, 109, 101, 32, 84, 114, 97, 120, 32, 40, 112, 114, 111,
+  116, 111, 84, 105, 109, 101, 32, 84, 114, 97, 120, 32, 40, 112, 114, 111, 116,
+  111,
+]);
+
+const generatedTfiFromY12 = new Uint8Array([
+  4, 5, 4, 1, 15, 0, 5, 31, 8, 9, 0, 0, 3, 7, 14, 0, 5, 31, 8, 9, 0, 0, 4, 3,
+  21, 0, 31, 31, 0, 9, 0, 0, 3, 3, 21, 0, 31, 31, 0, 9, 0, 0,
+]);
+
 describe("GenMDMParser", () => {
   it("can be constructed", () => {
     const parser = new GenMDMParser();
@@ -279,6 +294,14 @@ describe("GenMDMParser", () => {
     const midiCCs = parsed.map((instrument) => instrument.toGenMDM());
 
     expect(midiCCs[0]).to.eql(generatedMidiCcs);
+  });
+
+  it("can parse Y12", () => {
+    const parser = new GenMDMParser();
+    const parsed = parser.parseY12(y12);
+    const tfi = parsed.toTFI();
+
+    expect(tfi).to.equalBytes(generatedTfiFromY12);
   });
 
   it("throws an error when a value is out of range in a genm file", () => {

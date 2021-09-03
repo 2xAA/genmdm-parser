@@ -25,3 +25,20 @@ console.log(parsed.map((instrument) => instrument.toTFI()));
 
 console.log("\ngenerated DMP");
 console.log(parsed.map((instrument) => instrument.toDMP()));
+
+const y12 = new Uint8Array([
+  100, 15, 5, 31, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 14, 5, 31, 8, 9, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 4, 21, 31, 31, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+  21, 31, 31, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 84, 105, 109, 101, 32, 84, 114, 97, 120, 32, 40, 112, 114,
+  111, 116, 111, 84, 105, 109, 101, 32, 84, 114, 97, 120, 32, 40, 112, 114, 111,
+  116, 111, 84, 105, 109, 101, 32, 84, 114, 97, 120, 32, 40, 112, 114, 111, 116,
+  111,
+]);
+
+const parsedY12 = parser.parseY12(y12);
+console.log("\nparsed y12");
+console.log(parsedY12);
+
+console.log("\ntfi from y12");
+console.log(parsedY12.toTFI());

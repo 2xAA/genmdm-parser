@@ -1,4 +1,10 @@
 import { GenmInstrument } from "./GenmInstrument";
+import {
+  unpackDetuneMultiple,
+  unpackRateScalingAttack,
+  unpackAmEnableFirstDecay,
+  unpackSustainRelease,
+} from "./utils/register-unpack";
 
 const genmInstrumentRegex = /(\d{1,3}), ((?:\d{1,3} ){49})(.*?);/g;
 // Captures three groups:
@@ -69,6 +75,62 @@ export class GenMDMParser {
       instrument[`op${index}Level2`] = tfi[10 + 10 * i];
       instrument[`op${index}SSGEG`] = tfi[11 + 10 * i];
     }
+
+    return instrument;
+  }
+
+  /**
+   * Huge help: https://github.com/Wohlstand/OPN2BankEditor/blob/master/src/FileFormats/format_gens_y12.cpp
+   */
+  parseY12(y12: Uint8Array): GenmInstrument {
+    const instrument = new GenmInstrument();
+
+    if (y12.length !== 128) {
+      throw new Error(`Y12 file is not of length 128: ${y12.length}`);
+    }
+
+    for (let i = 0; i < 4; ++i) {
+      const index = i + 1;
+
+      const [detuneRegister, multiple] = unpackDetuneMultiple(y12[0 + i * 16]);
+      let detune = detuneRegister;
+
+      // converts from register detune value to tfi/genm detune value
+      // register value is 0,4: no change, 1-3: +1 - +3, 5-7: -1 - -3
+      if (detune > 6 || detune === 0 || detune === 4) {
+        detune = 3;
+      } else if (detune > 0 && detune < 4) {
+        detune = detune + 4;
+      } else if (detune > 4) {
+        detune = detune - (7 - (detune - 4));
+      }
+
+      instrument[`op${index}Detune`] = detune;
+      instrument[`op${index}Multiple`] = multiple;
+
+      instrument[`op${index}TotalLevel`] = 127 - (y12[1 + 16 * i] & 0x7f);
+
+      const [rateScaling, attack] = unpackRateScalingAttack(y12[2 + 16 * i]);
+      instrument[`op${index}RateScaling`] = rateScaling;
+      instrument[`op${index}Attack`] = attack;
+
+      const [amEnable, firstDecay] = unpackAmEnableFirstDecay(y12[3 + 16 * i]);
+      instrument[`op${index}LfoEnable`] = amEnable;
+      instrument[`op${index}Decay1`] = firstDecay;
+
+      instrument[`op${index}Decay2`] = y12[4 + 16 * i] & 0x1f;
+
+      const [sustain, release] = unpackSustainRelease(y12[5 + 16 * i]);
+
+      instrument[`op${index}Release`] = release;
+      instrument[`op${index}Level2`] = sustain;
+
+      instrument[`op${index}SSGEG`] = y12[8 + 16 * i] & 0x0f;
+    }
+
+    instrument.algorithm = y12[4 * 16 + 0];
+    instrument.fmFeedback = y12[4 * 16 + 1];
+    instrument.instrumentName = String.fromCharCode(...y12.slice(5 * 16, 16));
 
     return instrument;
   }
