@@ -1,4 +1,5 @@
 import { GenmInstrument } from "./GenmInstrument";
+import { mapToRange } from "./utils/map-to-range";
 import {
   unpackDetuneMultiple,
   unpackRateScalingAttack,
@@ -133,6 +134,27 @@ export class GenMDMParser {
     instrument.instrumentName = String.fromCharCode(
       ...y12.slice(5 * 16, 5 * 16 + 16)
     );
+
+    return instrument;
+  }
+
+  parseGenMDM(midiCC: Map<number, number>): GenmInstrument {
+    const instrument = new GenmInstrument();
+    const { genmInstrumentParameters: parameters } = instrument;
+
+    Object.keys(parameters).forEach((parameter) => {
+      const hasCC = parameters[parameter].genMdmMidi;
+      let value;
+      if (hasCC && "cc" in hasCC) {
+        value = midiCC.get(hasCC.cc);
+      }
+
+      if (value !== undefined) {
+        const mapped = mapToRange(value, 127, parameters[parameter].size - 1);
+
+        instrument[parameter] = mapped;
+      }
+    });
 
     return instrument;
   }

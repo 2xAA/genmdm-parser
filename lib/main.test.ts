@@ -288,6 +288,14 @@ describe("GenMDMParser", () => {
     expect(dmps[0]).to.equalBytes(generatedDmp);
   });
 
+  it("can parse GenMDM MIDI CC values", () => {
+    const parser = new GenMDMParser();
+    const parsed = parser.parseGenMDM(generatedMidiCcs);
+    const tfi = parsed.toTFI();
+
+    expect(tfi).to.equalBytes(generatedTfi);
+  });
+
   it("can generate GenMDM MIDI CC values", () => {
     const parser = new GenMDMParser();
     const parsed = parser.parseGenm(genMdmFile);

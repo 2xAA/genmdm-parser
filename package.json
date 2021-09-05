@@ -1,6 +1,6 @@
 {
   "name": "genmdm-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "GenMDM Parser",
   "browser": "dist.browser/main.js",
   "main": "dist/main.js",
@@ -34,6 +34,7 @@
     "dev": "vite",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'lib/**/*.test.ts'",
     "coverage": "nyc -r text -e .ts -x \"lib/*.test.ts\" yarn run test",
-    "lint": "eslint '*/**/*.{js,ts}' --quiet --fix"
+    "lint": "eslint '*/**/*.{js,ts}' --quiet --fix",
+    "prepublishOnly": "npm run test && npm run build"
   }
 }
