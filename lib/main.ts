@@ -130,7 +130,9 @@ export class GenMDMParser {
 
     instrument.algorithm = y12[4 * 16 + 0];
     instrument.fmFeedback = y12[4 * 16 + 1];
-    instrument.instrumentName = String.fromCharCode(...y12.slice(5 * 16, 16));
+    instrument.instrumentName = String.fromCharCode(
+      ...y12.slice(5 * 16, 5 * 16 + 16)
+    );
 
     return instrument;
   }

@@ -304,6 +304,14 @@ describe("GenMDMParser", () => {
     expect(tfi).to.equalBytes(generatedTfiFromY12);
   });
 
+  it("can generate Y12", () => {
+    const parser = new GenMDMParser();
+    const parsed = parser.parseY12(y12);
+    const y12generated = parsed.toY12();
+
+    expect(y12generated).to.equalBytes(y12);
+  });
+
   it("throws an error when a value is out of range in a genm file", () => {
     const parser = new GenMDMParser();
 
