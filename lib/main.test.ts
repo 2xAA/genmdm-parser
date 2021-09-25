@@ -1,6 +1,36 @@
 import * as chai from "chai";
 import chaiBytes from "chai-bytes";
+import fs from "fs";
+import path from "path";
 import { GenMDMParser } from "./main";
+
+const patchesDirectory = "./patches/";
+
+// gets list of files in directory and child directories by extension and returns array of file names
+const getFiles = (dir: string, ext: string): string[] => {
+  const files = fs.readdirSync(dir);
+  const result = [];
+  for (const file of files) {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory()) {
+      result.push(...getFiles(filePath, ext));
+    } else if (path.extname(filePath) === ext) {
+      result.push(filePath);
+    }
+  }
+  return result;
+};
+
+// returns the filename with extension from the path
+const getFileName = (file: string): string => {
+  return path.basename(file);
+};
+
+// opens file as uint8array and returns it
+const openFile = (file: string): Uint8Array => {
+  return new Uint8Array(fs.readFileSync(file));
+};
 
 const { expect } = chai.use(chaiBytes);
 
@@ -237,7 +267,7 @@ const y12 = new Uint8Array([
 ]);
 
 const generatedTfiFromY12 = new Uint8Array([
-  4, 5, 4, 1, 15, 0, 5, 31, 8, 9, 0, 0, 3, 7, 14, 0, 5, 31, 8, 9, 0, 0, 4, 3,
+  4, 5, 4, 1, 15, 0, 5, 31, 8, 9, 0, 0, 3, 6, 14, 0, 5, 31, 8, 9, 0, 0, 4, 3,
   21, 0, 31, 31, 0, 9, 0, 0, 3, 3, 21, 0, 31, 31, 0, 9, 0, 0,
 ]);
 
@@ -280,6 +310,22 @@ describe("GenMDMParser", () => {
     expect(tfi[0]).to.equalBytes(generatedTfi);
   });
 
+  const tfiFilePaths = getFiles(`${patchesDirectory}/tfi`, ".tfi");
+  describe("can parse and generate TFI from patches directory", function () {
+    tfiFilePaths.forEach((tfiFilePath) => {
+      it(`${getFileName(tfiFilePath)}`, function () {
+        const parser = new GenMDMParser();
+        const patch = openFile(tfiFilePath);
+        let tfiGenerated = null;
+
+        const parsed = parser.parseTfi(patch);
+        tfiGenerated = parsed.toTFI();
+
+        expect(tfiGenerated).to.equalBytes(patch);
+      });
+    });
+  });
+
   it("can generate DMP", () => {
     const parser = new GenMDMParser();
     const parsed = parser.parseGenm(genMdmFile);
@@ -318,6 +364,20 @@ describe("GenMDMParser", () => {
     const y12generated = parsed.toY12();
 
     expect(y12generated).to.equalBytes(y12);
+  });
+
+  const y12FilePaths = getFiles(`${patchesDirectory}/y12`, ".y12");
+  describe("can parse and generate Y12 from patches directory", function () {
+    y12FilePaths.forEach((y12FilePath) => {
+      it(`${getFileName(y12FilePath)}`, function () {
+        const parser = new GenMDMParser();
+        const patch = openFile(y12FilePath);
+        const parsed = parser.parseY12(patch);
+        const y12generated = parsed.toY12();
+
+        expect(y12generated).to.equalBytes(patch);
+      });
+    });
   });
 
   it("throws an error when a value is out of range in a genm file", () => {

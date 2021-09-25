@@ -97,13 +97,15 @@ export class GenMDMParser {
       let detune = detuneRegister;
 
       // converts from register detune value to tfi/genm detune value
-      // register value is 0,4: no change, 1-3: +1 - +3, 5-7: -1 - -3
-      if (detune > 6 || detune === 0 || detune === 4) {
+      // we convert from 0, +1, +2, +3, 0, -1, -2, -3 to -3, -2, -1, 0, 1, 2, 3
+      //                 0,  1,  2,  3, 4,  5,  6,  7     0,  1,  2, 3, 4, 5, 6
+
+      if (detune === 0 || detune === 4) {
         detune = 3;
       } else if (detune > 0 && detune < 4) {
-        detune = detune + 4;
+        detune = detune + 3;
       } else if (detune > 4) {
-        detune = detune - (7 - (detune - 4));
+        detune = detune - 5;
       }
 
       instrument[`op${index}Detune`] = detune;

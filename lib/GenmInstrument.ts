@@ -237,15 +237,16 @@ export class GenmInstrument {
 
       let detune = instrument[`op${index}Detune`];
 
-      // converts from tfi/genm detune value to register detune value
-      // register value is 0,4: no change, 1-3: +1 - +3, 5-7: -1 - -3
-      // tfi is 0: -3, 1: -2, 2: -1, 3: 0, 4: 1, 5: 2, 6: 3
+      // converts from register detune value to tfi/genm detune value
+      // we convert from -3, -2, -1, 0, 1, 2, 3  to  0, +1, +2, +3, 0, -1, -2, -3
+      //                  0,  1,  2, 3, 4, 5, 6,     0,  1,  2,  3, 4,  5,  6,  7
+
       if (detune === 3) {
         detune = 0;
-      } else if (detune > 0 && detune < 3) {
-        detune = 7 - detune;
+      } else if (detune > -1 && detune < 4) {
+        detune = detune + 7 - detune * 2;
       } else if (detune > 3) {
-        detune = detune - 4;
+        detune = detune - 3;
       }
 
       y12Data[i * 16 + 0] = packDetuneMultiple(
