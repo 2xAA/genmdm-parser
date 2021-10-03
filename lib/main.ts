@@ -6,6 +6,7 @@ import {
   unpackAmEnableFirstDecay,
   unpackSustainRelease,
 } from "./utils/register-unpack";
+import { getDmpInfo } from "./utils/get-dmp-info";
 
 const genmInstrumentRegex = /(\d{1,3}), ((?:\d{1,3} ){49})(.*?);/g;
 // Captures three groups:
@@ -157,6 +158,34 @@ export class GenMDMParser {
         instrument[parameter] = mapped;
       }
     });
+
+    return instrument;
+  }
+
+  parseDMP(dmp: Uint8Array): GenmInstrument {
+    const instrument = new GenmInstrument();
+    const { dataOffset, headOffset } = getDmpInfo(dmp);
+
+    instrument.lfoFm = dmp[headOffset + 0];
+    instrument.fmFeedback = dmp[headOffset + 1];
+    instrument.algorithm = dmp[headOffset + 2];
+    instrument.lfoAm = dmp[headOffset + 3];
+
+    for (let i = 0; i < 4; ++i) {
+      const index = i + 1;
+
+      instrument[`op${index}Multiple`] = dmp[dataOffset + 0 + 11 * i];
+      instrument[`op${index}TotalLevel`] = 127 - dmp[dataOffset + 1 + 11 * i];
+      instrument[`op${index}Attack`] = dmp[dataOffset + 2 + 11 * i];
+      instrument[`op${index}Decay1`] = dmp[dataOffset + 3 + 11 * i];
+      instrument[`op${index}Level2`] = dmp[dataOffset + 4 + 11 * i];
+      instrument[`op${index}Release`] = dmp[dataOffset + 5 + 11 * i];
+      instrument[`op${index}LfoEnable`] = dmp[dataOffset + 6 + 11 * i];
+      instrument[`op${index}RateScaling`] = dmp[dataOffset + 7 + 11 * i];
+      instrument[`op${index}Detune`] = dmp[dataOffset + 8 + 11 * i];
+      instrument[`op${index}Decay2`] = dmp[dataOffset + 9 + 11 * i];
+      instrument[`op${index}SSGEG`] = dmp[dataOffset + 10 + 11 * i];
+    }
 
     return instrument;
   }

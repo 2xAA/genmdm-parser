@@ -195,7 +195,7 @@ export class GenmInstrument {
    */
   toDMP(): Uint8Array {
     const { instrument } = this;
-    const dmpData = new Uint8Array(32);
+    const dmpData = new Uint8Array(51);
 
     // file version
     dmpData[0x00] = 0x0b;
@@ -207,7 +207,7 @@ export class GenmInstrument {
     dmpData[0x03] = instrument.lfoFm;
     dmpData[0x04] = instrument.fmFeedback;
     dmpData[0x05] = instrument.algorithm;
-    dmpData[0x06] = instrument.lfoFm;
+    dmpData[0x06] = instrument.lfoAm;
 
     for (let i = 0; i < 4; ++i) {
       const index = i + 1;
