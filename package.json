@@ -1,6 +1,6 @@
 {
   "name": "genmdm-parser",
-  "version": "1.0.1",
+  "version": "0.0.0-development",
   "description": "GenMDM Parser",
   "browser": "dist.browser/main.js",
   "main": "dist/main.js",
@@ -12,6 +12,7 @@
   "author": "2xAA",
   "license": "MIT",
   "devDependencies": {
+    "@semantic-release/git": "^10.0.0",
     "@types/chai": "^4.2.16",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.12.2",
@@ -25,6 +26,7 @@
     "mocha": "^8.3.2",
     "nyc": "^15.1.0",
     "prettier": "^2.3.0",
+    "semantic-release": "^18.0.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.3.2",
     "vite": "^2.3.7"
@@ -35,6 +37,11 @@
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'lib/**/*.test.ts' --timeout 10000",
     "coverage": "nyc -r text -e .ts -x \"lib/*.test.ts\" yarn run test",
     "lint": "eslint '*/**/*.{js,ts}' --quiet --fix",
-    "prepublishOnly": "npm run test && npm run build"
+    "prepublishOnly": "npm run test && npm run build",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/2xAA/genmdm-parser.git"
   }
 }

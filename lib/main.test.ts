@@ -3,6 +3,7 @@ import chaiBytes from "chai-bytes";
 import fs from "fs";
 import path from "path";
 import { GenMDMParser } from "./main";
+import { getDmpInfo } from "./utils/get-dmp-info";
 
 const patchesDirectory = "./patches/";
 
@@ -199,11 +200,6 @@ const parsedTfi = {
   op4SSGEG: 0,
 };
 
-const generatedDmp = [
-  11, 2, 1, 0, 4, 4, 0, 4, 30, 31, 16, 4, 2, 0, 0, 6, 2, 0, 4, 30, 31, 13, 3, 2,
-  0, 0, 0, 2, 0, 2, 27, 24,
-];
-
 const generatedMidiCcs = new Map<number, number>([
   [14, 73],
   [75, 0],
@@ -326,14 +322,6 @@ describe("GenMDMParser", () => {
     });
   });
 
-  it("can generate DMP", () => {
-    const parser = new GenMDMParser();
-    const parsed = parser.parseGenm(genMdmFile);
-    const dmps = parsed.map((instrument) => instrument.toDMP());
-
-    expect(dmps[0]).to.equalBytes(generatedDmp);
-  });
-
   it("can parse GenMDM MIDI CC values", () => {
     const parser = new GenMDMParser();
     const parsed = parser.parseGenMDM(generatedMidiCcs);
@@ -386,5 +374,23 @@ describe("GenMDMParser", () => {
     expect(() => {
       parser.parseGenm(badGenMdmFile);
     }).to.throw();
+  });
+
+  const legecyDmpFilePaths = getFiles(`${patchesDirectory}/dmp/legacy`, ".dmp");
+  describe("can parse all DMP versions and generate DMP from patches directory", function () {
+    legecyDmpFilePaths.forEach((dmpFilePath) => {
+      it(`${getFileName(dmpFilePath)}`, function () {
+        const parser = new GenMDMParser();
+        const patch = openFile(dmpFilePath);
+        let dmpGenerated = null;
+
+        const { headOffset } = getDmpInfo(patch);
+
+        const parsed = parser.parseDMP(patch);
+        dmpGenerated = parsed.toDMP();
+
+        expect(dmpGenerated.slice(3)).to.equalBytes(patch.slice(headOffset));
+      });
+    });
   });
 });
