@@ -1,6 +1,6 @@
 {
   "name": "genmdm-parser",
-  "version": "0.0.0-development",
+  "version": "1.0.2",
   "description": "GenMDM Parser",
   "browser": "dist.browser/main.js",
   "main": "dist/main.js",
