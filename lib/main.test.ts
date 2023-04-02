@@ -10,7 +10,7 @@ const patchesDirectory = "./patches/";
 // gets list of files in directory and child directories by extension and returns array of file names
 const getFiles = (dir: string, ext: string): string[] => {
   const files = fs.readdirSync(dir);
-  const result = [];
+  const result: string[] = [];
   for (const file of files) {
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
@@ -312,7 +312,7 @@ describe("GenMDMParser", () => {
       it(`${getFileName(tfiFilePath)}`, function () {
         const parser = new GenMDMParser();
         const patch = openFile(tfiFilePath);
-        let tfiGenerated = null;
+        let tfiGenerated: null | Uint8Array = null;
 
         const parsed = parser.parseTfi(patch);
         tfiGenerated = parsed.toTFI();
@@ -382,7 +382,7 @@ describe("GenMDMParser", () => {
       it(`${getFileName(dmpFilePath)}`, function () {
         const parser = new GenMDMParser();
         const patch = openFile(dmpFilePath);
-        let dmpGenerated = null;
+        let dmpGenerated: null | Uint8Array = null;
 
         const { headOffset } = getDmpInfo(patch);
 
