@@ -1,4 +1,6 @@
 export declare interface GenMInstrumentValues {
+  [key: string]: number;
+
   /** number in the range of 0-127 */
   instrumentIndex: number;
 

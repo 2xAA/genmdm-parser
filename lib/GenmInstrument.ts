@@ -1,7 +1,18 @@
 import { GenMInstrumentValues } from "./main.d";
+import { mapToCCRange } from "./utils/map-to-cc-range";
+import {
+  packAmEnableFirstDecay,
+  packDetuneMultiple,
+  packRateScalingAttack,
+  packSustainRelease,
+} from "./utils/register-pack";
 
+interface GenMdmMidiParameter {
+  cc: number;
+}
 interface GenmInstrumentParameter {
   size: number;
+  genMdmMidi?: GenMdmMidiParameter;
 }
 
 interface GenmInstrumentParameterList {
@@ -10,55 +21,55 @@ interface GenmInstrumentParameterList {
 
 const genmInstrumentParameters: GenmInstrumentParameterList = {
   instrumentIndex: { size: 128 },
-  algorithm: { size: 8 },
-  lfoFm: { size: 8 },
-  lfoAm: { size: 8 },
-  fmFeedback: { size: 8 },
-  panning: { size: 4 },
-  op1TotalLevel: { size: 128 },
-  op2TotalLevel: { size: 128 },
-  op3TotalLevel: { size: 128 },
-  op4TotalLevel: { size: 128 },
-  op1Detune: { size: 8 },
-  op2Detune: { size: 8 },
-  op3Detune: { size: 8 },
-  op4Detune: { size: 8 },
-  op1Attack: { size: 32 },
-  op2Attack: { size: 32 },
-  op3Attack: { size: 32 },
-  op4Attack: { size: 32 },
-  op1Decay1: { size: 32 },
-  op2Decay1: { size: 32 },
-  op3Decay1: { size: 32 },
-  op4Decay1: { size: 32 },
-  op1Decay2: { size: 32 },
-  op2Decay2: { size: 32 },
-  op3Decay2: { size: 32 },
-  op4Decay2: { size: 32 },
-  op1Multiple: { size: 16 },
-  op2Multiple: { size: 16 },
-  op3Multiple: { size: 16 },
-  op4Multiple: { size: 16 },
-  op1RateScaling: { size: 4 },
-  op2RateScaling: { size: 4 },
-  op3RateScaling: { size: 4 },
-  op4RateScaling: { size: 4 },
-  op1Level2: { size: 16 },
-  op2Level2: { size: 16 },
-  op3Level2: { size: 16 },
-  op4Level2: { size: 16 },
-  op1Release: { size: 16 },
-  op2Release: { size: 16 },
-  op3Release: { size: 16 },
-  op4Release: { size: 16 },
-  op1LfoEnable: { size: 2 },
-  op2LfoEnable: { size: 2 },
-  op3LfoEnable: { size: 2 },
-  op4LfoEnable: { size: 2 },
-  op1SSGEG: { size: 16 },
-  op2SSGEG: { size: 16 },
-  op3SSGEG: { size: 16 },
-  op4SSGEG: { size: 16 },
+  algorithm: { size: 8, genMdmMidi: { cc: 14 } },
+  lfoFm: { size: 8, genMdmMidi: { cc: 75 } },
+  lfoAm: { size: 8, genMdmMidi: { cc: 76 } },
+  fmFeedback: { size: 8, genMdmMidi: { cc: 15 } },
+  panning: { size: 4, genMdmMidi: { cc: 77 } },
+  op1TotalLevel: { size: 128, genMdmMidi: { cc: 16 } },
+  op2TotalLevel: { size: 128, genMdmMidi: { cc: 17 } },
+  op3TotalLevel: { size: 128, genMdmMidi: { cc: 18 } },
+  op4TotalLevel: { size: 128, genMdmMidi: { cc: 19 } },
+  op1Detune: { size: 8, genMdmMidi: { cc: 24 } },
+  op2Detune: { size: 8, genMdmMidi: { cc: 25 } },
+  op3Detune: { size: 8, genMdmMidi: { cc: 26 } },
+  op4Detune: { size: 8, genMdmMidi: { cc: 27 } },
+  op1Attack: { size: 32, genMdmMidi: { cc: 43 } },
+  op2Attack: { size: 32, genMdmMidi: { cc: 44 } },
+  op3Attack: { size: 32, genMdmMidi: { cc: 45 } },
+  op4Attack: { size: 32, genMdmMidi: { cc: 46 } },
+  op1Decay1: { size: 32, genMdmMidi: { cc: 47 } },
+  op2Decay1: { size: 32, genMdmMidi: { cc: 48 } },
+  op3Decay1: { size: 32, genMdmMidi: { cc: 49 } },
+  op4Decay1: { size: 32, genMdmMidi: { cc: 50 } },
+  op1Decay2: { size: 32, genMdmMidi: { cc: 51 } },
+  op2Decay2: { size: 32, genMdmMidi: { cc: 52 } },
+  op3Decay2: { size: 32, genMdmMidi: { cc: 53 } },
+  op4Decay2: { size: 32, genMdmMidi: { cc: 54 } },
+  op1Multiple: { size: 16, genMdmMidi: { cc: 20 } },
+  op2Multiple: { size: 16, genMdmMidi: { cc: 21 } },
+  op3Multiple: { size: 16, genMdmMidi: { cc: 22 } },
+  op4Multiple: { size: 16, genMdmMidi: { cc: 23 } },
+  op1RateScaling: { size: 4, genMdmMidi: { cc: 39 } },
+  op2RateScaling: { size: 4, genMdmMidi: { cc: 40 } },
+  op3RateScaling: { size: 4, genMdmMidi: { cc: 41 } },
+  op4RateScaling: { size: 4, genMdmMidi: { cc: 42 } },
+  op1Level2: { size: 16, genMdmMidi: { cc: 55 } },
+  op2Level2: { size: 16, genMdmMidi: { cc: 56 } },
+  op3Level2: { size: 16, genMdmMidi: { cc: 57 } },
+  op4Level2: { size: 16, genMdmMidi: { cc: 58 } },
+  op1Release: { size: 16, genMdmMidi: { cc: 59 } },
+  op2Release: { size: 16, genMdmMidi: { cc: 60 } },
+  op3Release: { size: 16, genMdmMidi: { cc: 61 } },
+  op4Release: { size: 16, genMdmMidi: { cc: 62 } },
+  op1LfoEnable: { size: 2, genMdmMidi: { cc: 70 } },
+  op2LfoEnable: { size: 2, genMdmMidi: { cc: 71 } },
+  op3LfoEnable: { size: 2, genMdmMidi: { cc: 72 } },
+  op4LfoEnable: { size: 2, genMdmMidi: { cc: 73 } },
+  op1SSGEG: { size: 16, genMdmMidi: { cc: 90 } },
+  op2SSGEG: { size: 16, genMdmMidi: { cc: 91 } },
+  op3SSGEG: { size: 16, genMdmMidi: { cc: 92 } },
+  op4SSGEG: { size: 16, genMdmMidi: { cc: 93 } },
 };
 
 function rangeCheck(parameter: string, value: number): number {
@@ -81,11 +92,13 @@ export class GenmInstrument {
     | GenmInstrumentParameterList
     | (() => string)
     | (() => Uint8Array)
-    | (() => GenMInstrumentValues);
+    | (() => GenMInstrumentValues)
+    | (() => Map<number, number>);
 
   instrument = {} as GenMInstrumentValues;
 
   toString(): string {
+    const { instrument } = this;
     const parameters: string[] = Object.keys(this.genmInstrumentParameters);
     parameters.shift();
 
@@ -93,10 +106,12 @@ export class GenmInstrument {
     string += `${this.instrumentIndex}, `;
 
     parameters.forEach((parameter: string, index: number) => {
-      string += `${this[parameter]}${index < parameters.length - 1 ? " " : ""}`;
+      string += `${instrument[parameter]}${
+        index < parameters.length - 1 ? " " : ""
+      }`;
     });
 
-    string += ` ${this.instrumentName};`;
+    string += ` ${instrument.instrumentName};`;
 
     return string;
   }
@@ -127,25 +142,27 @@ export class GenmInstrument {
    *  11, 21, 31, 41 | SSG-EG        | 0 - 15 [0-7 disabled (set to 0), 8-15 enabled]
    */
   toTFI(): Uint8Array {
+    const { instrument } = this;
+
     const tfiData = new Uint8Array(42);
     // algorithm
-    tfiData[0] = this.algorithm;
+    tfiData[0] = instrument.algorithm;
     // feedback
-    tfiData[1] = this.fmFeedback;
+    tfiData[1] = instrument.fmFeedback;
 
     for (let i = 0; i < 4; ++i) {
       const index = i + 1;
 
-      tfiData[2 + 10 * i] = Number(this[`op${index}Multiple`]);
-      tfiData[3 + 10 * i] = Number(this[`op${index}Detune`]);
-      tfiData[4 + 10 * i] = Number(this[`op${index}TotalLevel`]);
-      tfiData[5 + 10 * i] = Number(this[`op${index}RateScaling`]);
-      tfiData[6 + 10 * i] = Number(this[`op${index}Attack`]);
-      tfiData[7 + 10 * i] = Number(this[`op${index}Decay1`]);
-      tfiData[8 + 10 * i] = Number(this[`op${index}Decay2`]);
-      tfiData[9 + 10 * i] = Number(this[`op${index}Release`]);
-      tfiData[10 + 10 * i] = Number(this[`op${index}Level2`]);
-      tfiData[11 + 10 * i] = Number(this[`op${index}SSGEG`]);
+      tfiData[2 + 10 * i] = instrument[`op${index}Multiple`];
+      tfiData[3 + 10 * i] = instrument[`op${index}Detune`];
+      tfiData[4 + 10 * i] = 127 - instrument[`op${index}TotalLevel`];
+      tfiData[5 + 10 * i] = instrument[`op${index}RateScaling`];
+      tfiData[6 + 10 * i] = instrument[`op${index}Attack`];
+      tfiData[7 + 10 * i] = instrument[`op${index}Decay1`];
+      tfiData[8 + 10 * i] = instrument[`op${index}Decay2`];
+      tfiData[9 + 10 * i] = instrument[`op${index}Release`];
+      tfiData[10 + 10 * i] = instrument[`op${index}Level2`];
+      tfiData[11 + 10 * i] = instrument[`op${index}SSGEG`];
     }
 
     return tfiData;
@@ -177,7 +194,8 @@ export class GenmInstrument {
    * 0x11 + n  1 Byte: SSGEG_Enabled <<3 | SSGEG
    */
   toDMP(): Uint8Array {
-    const dmpData = new Uint8Array(32);
+    const { instrument } = this;
+    const dmpData = new Uint8Array(51);
 
     // file version
     dmpData[0x00] = 0x0b;
@@ -186,29 +204,110 @@ export class GenmInstrument {
     // instrument Mode
     dmpData[0x02] = 0x01;
 
-    dmpData[0x03] = this.lfoFm;
-    dmpData[0x04] = this.fmFeedback;
-    dmpData[0x05] = this.algorithm;
-    dmpData[0x06] = this.lfoFm;
+    dmpData[0x03] = instrument.lfoFm;
+    dmpData[0x04] = instrument.fmFeedback;
+    dmpData[0x05] = instrument.algorithm;
+    dmpData[0x06] = instrument.lfoAm;
 
     for (let i = 0; i < 4; ++i) {
       const index = i + 1;
 
-      dmpData[0x07 + 11 * i] = Number(this[`op${index}Multiple`]);
-      dmpData[0x08 + 11 * i] = Number(this[`op${index}TotalLevel`]);
-      dmpData[0x09 + 11 * i] = Number(this[`op${index}Attack`]);
-      dmpData[0x0a + 11 * i] = Number(this[`op${index}Decay1`]);
-      dmpData[0x0b + 11 * i] = Number(this[`op${index}Decay2`]);
-      dmpData[0x0c + 11 * i] = Number(this[`op${index}Release`]);
-      // AM (not stored in .genm files?)
-      dmpData[0x0d + 11 * i] = 0;
-      dmpData[0x0e + 11 * i] = Number(this[`op${index}RateScaling`]);
-      dmpData[0x0f + 11 * i] = Number(this[`op${index}Detune`]);
-      dmpData[0x10 + 11 * i] = Number(this[`op${index}Decay2`]);
-      dmpData[0x11 + 11 * i] = Number(this[`op${index}SSGEG`]);
+      dmpData[0x07 + 11 * i] = instrument[`op${index}Multiple`];
+      dmpData[0x08 + 11 * i] = 127 - instrument[`op${index}TotalLevel`];
+      dmpData[0x09 + 11 * i] = instrument[`op${index}Attack`];
+      dmpData[0x0a + 11 * i] = instrument[`op${index}Decay1`];
+      dmpData[0x0b + 11 * i] = instrument[`op${index}Level2`];
+      dmpData[0x0c + 11 * i] = instrument[`op${index}Release`];
+      dmpData[0x0d + 11 * i] = instrument[`op${index}LfoEnable`];
+      dmpData[0x0e + 11 * i] = instrument[`op${index}RateScaling`];
+      dmpData[0x0f + 11 * i] = instrument[`op${index}Detune`];
+      dmpData[0x10 + 11 * i] = instrument[`op${index}Decay2`];
+      dmpData[0x11 + 11 * i] = instrument[`op${index}SSGEG`];
     }
 
     return dmpData;
+  }
+
+  toY12(): Uint8Array {
+    const { instrument } = this;
+    const y12Data = new Uint8Array(128).fill(0);
+
+    for (let i = 0; i < 4; ++i) {
+      const index = i + 1;
+
+      let detune = instrument[`op${index}Detune`];
+
+      // converts from register detune value to tfi/genm detune value
+      // we convert from -3, -2, -1, 0, 1, 2, 3  to  0, +1, +2, +3, 0, -1, -2, -3
+      //                  0,  1,  2, 3, 4, 5, 6,     0,  1,  2,  3, 4,  5,  6,  7
+
+      if (detune === 3) {
+        detune = 0;
+      } else if (detune > -1 && detune < 4) {
+        detune = detune + 7 - detune * 2;
+      } else if (detune > 3) {
+        detune = detune - 3;
+      }
+
+      y12Data[i * 16 + 0] = packDetuneMultiple(
+        detune,
+        instrument[`op${index}Multiple`]
+      );
+
+      y12Data[i * 16 + 1] = (127 - instrument[`op${index}TotalLevel`]) & 0x7f;
+
+      y12Data[i * 16 + 2] = packRateScalingAttack(
+        instrument[`op${index}RateScaling`],
+        instrument[`op${index}Attack`]
+      );
+
+      y12Data[i * 16 + 3] = packAmEnableFirstDecay(
+        instrument[`op${index}LfoEnable`],
+        instrument[`op${index}Decay1`]
+      );
+
+      y12Data[i * 16 + 4] = 0x1f & instrument[`op${index}Decay2`];
+
+      y12Data[i * 16 + 5] = packSustainRelease(
+        instrument[`op${index}Level2`],
+        instrument[`op${index}Release`]
+      );
+
+      y12Data[i * 16 + 6] = 0x0f & instrument[`op${index}SSGEG`];
+    }
+
+    y12Data[4 * 16 + 0] = instrument.algorithm;
+    y12Data[4 * 16 + 1] = instrument.fmFeedback;
+
+    const name: number[] = [...instrument.instrumentName.slice(0, 16)].map(
+      (char: string) => char.charCodeAt(0)
+    );
+
+    for (let i = 0; i < 3; ++i) {
+      name.forEach((value, index) => {
+        y12Data[(5 + i) * 16 + index] = value;
+      });
+    }
+
+    return y12Data;
+  }
+
+  toGenMDM(): Map<number, number> {
+    const { instrument } = this;
+    const map = new Map<number, number>();
+    const parameters: string[] = Object.keys(this.genmInstrumentParameters);
+    parameters.shift();
+
+    parameters.forEach((parameter: string) => {
+      const cc = this.genmInstrumentParameters[parameter].genMdmMidi?.cc;
+      const size = this.genmInstrumentParameters[parameter].size - 1;
+
+      if (cc) {
+        map.set(cc, mapToCCRange(instrument[parameter], size));
+      }
+    });
+
+    return map;
   }
 
   get genmInstrumentParameters(): GenmInstrumentParameterList {
