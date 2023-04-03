@@ -72,8 +72,15 @@ const genmInstrumentParameters: GenmInstrumentParameterList = {
   op4SSGEG: { size: 16, genMdmMidi: { cc: 93 } },
 };
 
-function rangeCheck(parameter: string, value: number): number {
-  if (value < 0 || value > genmInstrumentParameters[parameter].size) {
+function rangeCheck(
+  parameter: string,
+  value: number,
+  clampOutOfRange: boolean
+): number {
+  if (
+    !clampOutOfRange &&
+    (value < 0 || value > genmInstrumentParameters[parameter].size)
+  ) {
     throw new Error(
       `${parameter} must be in range of 0 and ${
         genmInstrumentParameters[parameter].size - 1
@@ -81,19 +88,34 @@ function rangeCheck(parameter: string, value: number): number {
     );
   }
 
+  if (clampOutOfRange) {
+    const clamped = Math.min(
+      Math.max(value, 0),
+      genmInstrumentParameters[parameter].size - 1
+    );
+
+    console.warn(
+      `Clamping out of range value for parameter "${parameter}". Was "${value}", now "${clamped}`
+    );
+
+    return clamped;
+  }
+
   return value;
 }
 
+interface GenmInstrumentOptions {
+  clampOutOfRange: boolean;
+}
+
 export class GenmInstrument {
-  [key: string]:
-    | string
-    | number
-    | GenMInstrumentValues
-    | GenmInstrumentParameterList
-    | (() => string)
-    | (() => Uint8Array)
-    | (() => GenMInstrumentValues)
-    | (() => Map<number, number>);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+  clampOutOfRange: boolean;
+
+  constructor(options?: GenmInstrumentOptions) {
+    this.clampOutOfRange = options?.clampOutOfRange ?? false;
+  }
 
   instrument = {} as GenMInstrumentValues;
 
@@ -327,14 +349,22 @@ export class GenmInstrument {
   }
 
   set instrumentIndex(index: number) {
-    this.instrument.instrumentIndex = rangeCheck("instrumentIndex", index);
+    this.instrument.instrumentIndex = rangeCheck(
+      "instrumentIndex",
+      index,
+      this.clampOutOfRange
+    );
   }
   get algorithm(): number {
     return this.instrument.algorithm;
   }
 
   set algorithm(algorithm: number) {
-    this.instrument.algorithm = rangeCheck("algorithm", algorithm);
+    this.instrument.algorithm = rangeCheck(
+      "algorithm",
+      algorithm,
+      this.clampOutOfRange
+    );
   }
 
   get lfoFm(): number {
@@ -342,7 +372,7 @@ export class GenmInstrument {
   }
 
   set lfoFm(lfoFm: number) {
-    this.instrument.lfoFm = rangeCheck("lfoFm", lfoFm);
+    this.instrument.lfoFm = rangeCheck("lfoFm", lfoFm, this.clampOutOfRange);
   }
 
   get lfoAm(): number {
@@ -350,7 +380,7 @@ export class GenmInstrument {
   }
 
   set lfoAm(lfoAm: number) {
-    this.instrument.lfoAm = rangeCheck("lfoAm", lfoAm);
+    this.instrument.lfoAm = rangeCheck("lfoAm", lfoAm, this.clampOutOfRange);
   }
 
   get fmFeedback(): number {
@@ -358,21 +388,33 @@ export class GenmInstrument {
   }
 
   set fmFeedback(fmFeedback: number) {
-    this.instrument.fmFeedback = rangeCheck("fmFeedback", fmFeedback);
+    this.instrument.fmFeedback = rangeCheck(
+      "fmFeedback",
+      fmFeedback,
+      this.clampOutOfRange
+    );
   }
   get panning(): number {
     return this.instrument.panning;
   }
 
   set panning(panning: number) {
-    this.instrument.panning = rangeCheck("panning", panning);
+    this.instrument.panning = rangeCheck(
+      "panning",
+      panning,
+      this.clampOutOfRange
+    );
   }
   get op1TotalLevel(): number {
     return this.instrument.op1TotalLevel;
   }
 
   set op1TotalLevel(op1TotalLevel: number) {
-    this.instrument.op1TotalLevel = rangeCheck("op1TotalLevel", op1TotalLevel);
+    this.instrument.op1TotalLevel = rangeCheck(
+      "op1TotalLevel",
+      op1TotalLevel,
+      this.clampOutOfRange
+    );
   }
 
   get op2TotalLevel(): number {
@@ -380,7 +422,11 @@ export class GenmInstrument {
   }
 
   set op2TotalLevel(op2TotalLevel: number) {
-    this.instrument.op2TotalLevel = rangeCheck("op2TotalLevel", op2TotalLevel);
+    this.instrument.op2TotalLevel = rangeCheck(
+      "op2TotalLevel",
+      op2TotalLevel,
+      this.clampOutOfRange
+    );
   }
 
   get op3TotalLevel(): number {
@@ -388,7 +434,11 @@ export class GenmInstrument {
   }
 
   set op3TotalLevel(op3TotalLevel: number) {
-    this.instrument.op3TotalLevel = rangeCheck("op3TotalLevel", op3TotalLevel);
+    this.instrument.op3TotalLevel = rangeCheck(
+      "op3TotalLevel",
+      op3TotalLevel,
+      this.clampOutOfRange
+    );
   }
 
   get op4TotalLevel(): number {
@@ -396,7 +446,11 @@ export class GenmInstrument {
   }
 
   set op4TotalLevel(op4TotalLevel: number) {
-    this.instrument.op4TotalLevel = rangeCheck("op4TotalLevel", op4TotalLevel);
+    this.instrument.op4TotalLevel = rangeCheck(
+      "op4TotalLevel",
+      op4TotalLevel,
+      this.clampOutOfRange
+    );
   }
 
   get op1Detune(): number {
@@ -404,7 +458,11 @@ export class GenmInstrument {
   }
 
   set op1Detune(op1Detune: number) {
-    this.instrument.op1Detune = rangeCheck("op1Detune", op1Detune);
+    this.instrument.op1Detune = rangeCheck(
+      "op1Detune",
+      op1Detune,
+      this.clampOutOfRange
+    );
   }
 
   get op2Detune(): number {
@@ -412,7 +470,11 @@ export class GenmInstrument {
   }
 
   set op2Detune(op2Detune: number) {
-    this.instrument.op2Detune = rangeCheck("op2Detune", op2Detune);
+    this.instrument.op2Detune = rangeCheck(
+      "op2Detune",
+      op2Detune,
+      this.clampOutOfRange
+    );
   }
 
   get op3Detune(): number {
@@ -420,7 +482,11 @@ export class GenmInstrument {
   }
 
   set op3Detune(op3Detune: number) {
-    this.instrument.op3Detune = rangeCheck("op3Detune", op3Detune);
+    this.instrument.op3Detune = rangeCheck(
+      "op3Detune",
+      op3Detune,
+      this.clampOutOfRange
+    );
   }
 
   get op4Detune(): number {
@@ -428,7 +494,11 @@ export class GenmInstrument {
   }
 
   set op4Detune(op4Detune: number) {
-    this.instrument.op4Detune = rangeCheck("op4Detune", op4Detune);
+    this.instrument.op4Detune = rangeCheck(
+      "op4Detune",
+      op4Detune,
+      this.clampOutOfRange
+    );
   }
 
   get op1Attack(): number {
@@ -436,7 +506,11 @@ export class GenmInstrument {
   }
 
   set op1Attack(op1Attack: number) {
-    this.instrument.op1Attack = rangeCheck("op1Attack", op1Attack);
+    this.instrument.op1Attack = rangeCheck(
+      "op1Attack",
+      op1Attack,
+      this.clampOutOfRange
+    );
   }
 
   get op2Attack(): number {
@@ -444,7 +518,11 @@ export class GenmInstrument {
   }
 
   set op2Attack(op2Attack: number) {
-    this.instrument.op2Attack = rangeCheck("op2Attack", op2Attack);
+    this.instrument.op2Attack = rangeCheck(
+      "op2Attack",
+      op2Attack,
+      this.clampOutOfRange
+    );
   }
 
   get op3Attack(): number {
@@ -452,7 +530,11 @@ export class GenmInstrument {
   }
 
   set op3Attack(op3Attack: number) {
-    this.instrument.op3Attack = rangeCheck("op3Attack", op3Attack);
+    this.instrument.op3Attack = rangeCheck(
+      "op3Attack",
+      op3Attack,
+      this.clampOutOfRange
+    );
   }
 
   get op4Attack(): number {
@@ -460,7 +542,11 @@ export class GenmInstrument {
   }
 
   set op4Attack(op4Attack: number) {
-    this.instrument.op4Attack = rangeCheck("op4Attack", op4Attack);
+    this.instrument.op4Attack = rangeCheck(
+      "op4Attack",
+      op4Attack,
+      this.clampOutOfRange
+    );
   }
 
   get op1Decay1(): number {
@@ -468,7 +554,11 @@ export class GenmInstrument {
   }
 
   set op1Decay1(op1Decay1: number) {
-    this.instrument.op1Decay1 = rangeCheck("op1Decay1", op1Decay1);
+    this.instrument.op1Decay1 = rangeCheck(
+      "op1Decay1",
+      op1Decay1,
+      this.clampOutOfRange
+    );
   }
 
   get op2Decay1(): number {
@@ -476,7 +566,11 @@ export class GenmInstrument {
   }
 
   set op2Decay1(op2Decay1: number) {
-    this.instrument.op2Decay1 = rangeCheck("op2Decay1", op2Decay1);
+    this.instrument.op2Decay1 = rangeCheck(
+      "op2Decay1",
+      op2Decay1,
+      this.clampOutOfRange
+    );
   }
 
   get op3Decay1(): number {
@@ -484,7 +578,11 @@ export class GenmInstrument {
   }
 
   set op3Decay1(op3Decay1: number) {
-    this.instrument.op3Decay1 = rangeCheck("op3Decay1", op3Decay1);
+    this.instrument.op3Decay1 = rangeCheck(
+      "op3Decay1",
+      op3Decay1,
+      this.clampOutOfRange
+    );
   }
 
   get op4Decay1(): number {
@@ -492,7 +590,11 @@ export class GenmInstrument {
   }
 
   set op4Decay1(op4Decay1: number) {
-    this.instrument.op4Decay1 = rangeCheck("op4Decay1", op4Decay1);
+    this.instrument.op4Decay1 = rangeCheck(
+      "op4Decay1",
+      op4Decay1,
+      this.clampOutOfRange
+    );
   }
 
   get op1Decay2(): number {
@@ -500,7 +602,11 @@ export class GenmInstrument {
   }
 
   set op1Decay2(op1Decay2: number) {
-    this.instrument.op1Decay2 = rangeCheck("op1Decay2", op1Decay2);
+    this.instrument.op1Decay2 = rangeCheck(
+      "op1Decay2",
+      op1Decay2,
+      this.clampOutOfRange
+    );
   }
 
   get op2Decay2(): number {
@@ -508,7 +614,11 @@ export class GenmInstrument {
   }
 
   set op2Decay2(op2Decay2: number) {
-    this.instrument.op2Decay2 = rangeCheck("op2Decay2", op2Decay2);
+    this.instrument.op2Decay2 = rangeCheck(
+      "op2Decay2",
+      op2Decay2,
+      this.clampOutOfRange
+    );
   }
 
   get op3Decay2(): number {
@@ -516,7 +626,11 @@ export class GenmInstrument {
   }
 
   set op3Decay2(op3Decay2: number) {
-    this.instrument.op3Decay2 = rangeCheck("op3Decay2", op3Decay2);
+    this.instrument.op3Decay2 = rangeCheck(
+      "op3Decay2",
+      op3Decay2,
+      this.clampOutOfRange
+    );
   }
 
   get op4Decay2(): number {
@@ -524,7 +638,11 @@ export class GenmInstrument {
   }
 
   set op4Decay2(op4Decay2: number) {
-    this.instrument.op4Decay2 = rangeCheck("op4Decay2", op4Decay2);
+    this.instrument.op4Decay2 = rangeCheck(
+      "op4Decay2",
+      op4Decay2,
+      this.clampOutOfRange
+    );
   }
 
   get op1Multiple(): number {
@@ -532,7 +650,11 @@ export class GenmInstrument {
   }
 
   set op1Multiple(op1Multiple: number) {
-    this.instrument.op1Multiple = rangeCheck("op1Multiple", op1Multiple);
+    this.instrument.op1Multiple = rangeCheck(
+      "op1Multiple",
+      op1Multiple,
+      this.clampOutOfRange
+    );
   }
 
   get op2Multiple(): number {
@@ -540,7 +662,11 @@ export class GenmInstrument {
   }
 
   set op2Multiple(op2Multiple: number) {
-    this.instrument.op2Multiple = rangeCheck("op2Multiple", op2Multiple);
+    this.instrument.op2Multiple = rangeCheck(
+      "op2Multiple",
+      op2Multiple,
+      this.clampOutOfRange
+    );
   }
 
   get op3Multiple(): number {
@@ -548,7 +674,11 @@ export class GenmInstrument {
   }
 
   set op3Multiple(op3Multiple: number) {
-    this.instrument.op3Multiple = rangeCheck("op3Multiple", op3Multiple);
+    this.instrument.op3Multiple = rangeCheck(
+      "op3Multiple",
+      op3Multiple,
+      this.clampOutOfRange
+    );
   }
 
   get op4Multiple(): number {
@@ -556,7 +686,11 @@ export class GenmInstrument {
   }
 
   set op4Multiple(op4Multiple: number) {
-    this.instrument.op4Multiple = rangeCheck("op4Multiple", op4Multiple);
+    this.instrument.op4Multiple = rangeCheck(
+      "op4Multiple",
+      op4Multiple,
+      this.clampOutOfRange
+    );
   }
 
   get op1RateScaling(): number {
@@ -566,7 +700,8 @@ export class GenmInstrument {
   set op1RateScaling(op1RateScaling: number) {
     this.instrument.op1RateScaling = rangeCheck(
       "op1RateScaling",
-      op1RateScaling
+      op1RateScaling,
+      this.clampOutOfRange
     );
   }
 
@@ -577,7 +712,8 @@ export class GenmInstrument {
   set op2RateScaling(op2RateScaling: number) {
     this.instrument.op2RateScaling = rangeCheck(
       "op2RateScaling",
-      op2RateScaling
+      op2RateScaling,
+      this.clampOutOfRange
     );
   }
 
@@ -588,7 +724,8 @@ export class GenmInstrument {
   set op3RateScaling(op3RateScaling: number) {
     this.instrument.op3RateScaling = rangeCheck(
       "op3RateScaling",
-      op3RateScaling
+      op3RateScaling,
+      this.clampOutOfRange
     );
   }
 
@@ -599,7 +736,8 @@ export class GenmInstrument {
   set op4RateScaling(op4RateScaling: number) {
     this.instrument.op4RateScaling = rangeCheck(
       "op4RateScaling",
-      op4RateScaling
+      op4RateScaling,
+      this.clampOutOfRange
     );
   }
 
@@ -608,7 +746,11 @@ export class GenmInstrument {
   }
 
   set op1Level2(op1Level2: number) {
-    this.instrument.op1Level2 = rangeCheck("op1Level2", op1Level2);
+    this.instrument.op1Level2 = rangeCheck(
+      "op1Level2",
+      op1Level2,
+      this.clampOutOfRange
+    );
   }
 
   get op2Level2(): number {
@@ -616,7 +758,11 @@ export class GenmInstrument {
   }
 
   set op2Level2(op2Level2: number) {
-    this.instrument.op2Level2 = rangeCheck("op2Level2", op2Level2);
+    this.instrument.op2Level2 = rangeCheck(
+      "op2Level2",
+      op2Level2,
+      this.clampOutOfRange
+    );
   }
 
   get op3Level2(): number {
@@ -624,7 +770,11 @@ export class GenmInstrument {
   }
 
   set op3Level2(op3Level2: number) {
-    this.instrument.op3Level2 = rangeCheck("op3Level2", op3Level2);
+    this.instrument.op3Level2 = rangeCheck(
+      "op3Level2",
+      op3Level2,
+      this.clampOutOfRange
+    );
   }
 
   get op4Level2(): number {
@@ -632,7 +782,11 @@ export class GenmInstrument {
   }
 
   set op4Level2(op4Level2: number) {
-    this.instrument.op4Level2 = rangeCheck("op4Level2", op4Level2);
+    this.instrument.op4Level2 = rangeCheck(
+      "op4Level2",
+      op4Level2,
+      this.clampOutOfRange
+    );
   }
 
   get op1Release(): number {
@@ -640,7 +794,11 @@ export class GenmInstrument {
   }
 
   set op1Release(op1Release: number) {
-    this.instrument.op1Release = rangeCheck("op1Release", op1Release);
+    this.instrument.op1Release = rangeCheck(
+      "op1Release",
+      op1Release,
+      this.clampOutOfRange
+    );
   }
 
   get op2Release(): number {
@@ -648,7 +806,11 @@ export class GenmInstrument {
   }
 
   set op2Release(op2Release: number) {
-    this.instrument.op2Release = rangeCheck("op2Release", op2Release);
+    this.instrument.op2Release = rangeCheck(
+      "op2Release",
+      op2Release,
+      this.clampOutOfRange
+    );
   }
 
   get op3Release(): number {
@@ -656,7 +818,11 @@ export class GenmInstrument {
   }
 
   set op3Release(op3Release: number) {
-    this.instrument.op3Release = rangeCheck("op3Release", op3Release);
+    this.instrument.op3Release = rangeCheck(
+      "op3Release",
+      op3Release,
+      this.clampOutOfRange
+    );
   }
 
   get op4Release(): number {
@@ -664,7 +830,11 @@ export class GenmInstrument {
   }
 
   set op4Release(op4Release: number) {
-    this.instrument.op4Release = rangeCheck("op4Release", op4Release);
+    this.instrument.op4Release = rangeCheck(
+      "op4Release",
+      op4Release,
+      this.clampOutOfRange
+    );
   }
 
   get op1LfoEnable(): number {
@@ -672,7 +842,11 @@ export class GenmInstrument {
   }
 
   set op1LfoEnable(op1LfoEnable: number) {
-    this.instrument.op1LfoEnable = rangeCheck("op1LfoEnable", op1LfoEnable);
+    this.instrument.op1LfoEnable = rangeCheck(
+      "op1LfoEnable",
+      op1LfoEnable,
+      this.clampOutOfRange
+    );
   }
 
   get op2LfoEnable(): number {
@@ -680,7 +854,11 @@ export class GenmInstrument {
   }
 
   set op2LfoEnable(op2LfoEnable: number) {
-    this.instrument.op2LfoEnable = rangeCheck("op2LfoEnable", op2LfoEnable);
+    this.instrument.op2LfoEnable = rangeCheck(
+      "op2LfoEnable",
+      op2LfoEnable,
+      this.clampOutOfRange
+    );
   }
 
   get op3LfoEnable(): number {
@@ -688,7 +866,11 @@ export class GenmInstrument {
   }
 
   set op3LfoEnable(op3LfoEnable: number) {
-    this.instrument.op3LfoEnable = rangeCheck("op3LfoEnable", op3LfoEnable);
+    this.instrument.op3LfoEnable = rangeCheck(
+      "op3LfoEnable",
+      op3LfoEnable,
+      this.clampOutOfRange
+    );
   }
 
   get op4LfoEnable(): number {
@@ -696,7 +878,11 @@ export class GenmInstrument {
   }
 
   set op4LfoEnable(op4LfoEnable: number) {
-    this.instrument.op4LfoEnable = rangeCheck("op4LfoEnable", op4LfoEnable);
+    this.instrument.op4LfoEnable = rangeCheck(
+      "op4LfoEnable",
+      op4LfoEnable,
+      this.clampOutOfRange
+    );
   }
 
   get op1SSGEG(): number {
@@ -704,7 +890,11 @@ export class GenmInstrument {
   }
 
   set op1SSGEG(op1SSGEG: number) {
-    this.instrument.op1SSGEG = rangeCheck("op1SSGEG", op1SSGEG);
+    this.instrument.op1SSGEG = rangeCheck(
+      "op1SSGEG",
+      op1SSGEG,
+      this.clampOutOfRange
+    );
   }
 
   get op2SSGEG(): number {
@@ -712,7 +902,11 @@ export class GenmInstrument {
   }
 
   set op2SSGEG(op2SSGEG: number) {
-    this.instrument.op2SSGEG = rangeCheck("op2SSGEG", op2SSGEG);
+    this.instrument.op2SSGEG = rangeCheck(
+      "op2SSGEG",
+      op2SSGEG,
+      this.clampOutOfRange
+    );
   }
 
   get op3SSGEG(): number {
@@ -720,7 +914,11 @@ export class GenmInstrument {
   }
 
   set op3SSGEG(op3SSGEG: number) {
-    this.instrument.op3SSGEG = rangeCheck("op3SSGEG", op3SSGEG);
+    this.instrument.op3SSGEG = rangeCheck(
+      "op3SSGEG",
+      op3SSGEG,
+      this.clampOutOfRange
+    );
   }
 
   get op4SSGEG(): number {
@@ -728,6 +926,10 @@ export class GenmInstrument {
   }
 
   set op4SSGEG(op4SSGEG: number) {
-    this.instrument.op4SSGEG = rangeCheck("op4SSGEG", op4SSGEG);
+    this.instrument.op4SSGEG = rangeCheck(
+      "op4SSGEG",
+      op4SSGEG,
+      this.clampOutOfRange
+    );
   }
 }
